@@ -1,26 +1,33 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+const path = require("path");
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-svelte-api-ctrl-clicker" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('vscode-svelte-api-ctrl-clicker.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from vscode-svelte-api-ctrl-clicker!');
-	});
-
-	context.subscriptions.push(disposable);
+    const provider = {
+        provideDefinition(document: vscode.TextDocument, position: vscode.Position) {
+            const wordRange = document.getWordRangeAtPosition(position, /(["'`])(?:(?=(\\?))\2.)*?\1/);
+            if (!wordRange) {
+                return;
+			}
+            const line = document.lineAt(position.line).text;
+            if (!/apiFetcher\s*\(\s*['"`]/.test(line)) {
+                return;
+            }
+            const srcRoot = findSrcFolder(path.dirname(document.uri.fsPath));
+            const relativePath = document.getText(wordRange).slice(1, -1);
+            const fullPath = [srcRoot, relativePath, '+server.ts'].join('/');
+			return new vscode.Location(vscode.Uri.file(fullPath), new vscode.Position(0, 0));
+        }
+    };
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider(['typescript', 'javascript', 'svelte'], provider));
 }
 
-// This method is called when your extension is deactivated
+function findSrcFolder(dir: string): string | null {
+    const normalizedDir = dir.replace(/\\/g, '/');
+    const parts = normalizedDir.split('/src/');
+
+    const path = parts.slice(0, -1).join('/src/') + '/src/routes';
+
+    return path;
+}
+
 export function deactivate() {}
