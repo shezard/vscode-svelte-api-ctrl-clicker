@@ -4,14 +4,11 @@ const path = require("path");
 export function activate(context: vscode.ExtensionContext) {
     const provider = {
         provideDefinition(document: vscode.TextDocument, position: vscode.Position) {
-            const wordRange = document.getWordRangeAtPosition(position, /(["'`])(?:(?=(\\?))\2.)*?\1/);
+            const wordRange = document.getWordRangeAtPosition(position, /(["'])(\/api\/[^"']*)\1/);
             if (!wordRange) {
                 return;
 			}
-            const line = document.lineAt(position.line).text;
-            if (!/apiFetcher\s*\(\s*['"`]/.test(line)) {
-                return;
-            }
+
             const srcRoot = findSrcFolder(path.dirname(document.uri.fsPath));
             const relativePath = document.getText(wordRange).slice(1, -1);
             const fullPath = [srcRoot, relativePath, '+server.ts'].join('/');

@@ -6,6 +6,8 @@
   "engines": {
     "vscode": "^1.99.0"
   },
+  "repository": "https://github.com/shezard/vscode-svelte-api-ctrl-clicker",
+  "license": "ISC",
   "categories": [
     "Other"
   ],
