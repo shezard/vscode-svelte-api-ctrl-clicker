@@ -1,8 +1,9 @@
 {
   "name": "vscode-svelte-api-ctrl-clicker",
-  "displayName": "vscode-svelte-api-ctrl-clicker",
-  "description": "",
-  "version": "0.0.1",
+  "displayName": "VSCode Svelte API Ctrl-Clicker",
+  "publisher": "damien-fayol",
+  "description": "Enables ctrl-click on api routes from client to server",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.99.0"
   },
@@ -15,14 +16,6 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "vscode-svelte-api-ctrl-clicker.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
